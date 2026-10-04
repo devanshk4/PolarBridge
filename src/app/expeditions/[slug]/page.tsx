@@ -1,0 +1,9 @@
+import Image from 'next/image';
+import { notFound } from 'next/navigation';
+import { expeditions } from '@/lib/data';
+import { publicCollection } from '@/server/public-collection';
+export const dynamic = 'force-dynamic';
+import { BackLink, ResourceCard, SectionTitle } from '@/components/ui';
+export function generateStaticParams() { return expeditions.map(e => ({ slug: e.slug })); }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) { const { slug } = await params; return { title: expeditions.find(e => e.slug === slug)?.region || 'Region not found' }; }
+export default async function RegionPage({ params }: { params: Promise<{ slug: string }> }) { const resources = await publicCollection(); const { slug } = await params; const e = expeditions.find(e => e.slug === slug); if (!e) notFound(); return <main id="main"><section className="destination-hero"><Image src={e.image} alt={`${e.region} landscape`} fill priority sizes="100vw" /><div className="feature-shade" /><div className="container"><BackLink href="/expeditions">All polar regions</BackLink><span className="eyebrow">{e.eyebrow}</span><h1>{e.title}</h1><p>{e.description}</p><div className="coordinate">{e.coordinate} · REGIONAL COLLECTION</div></div></section><section className="section container"><SectionTitle eyebrow={`DISCOVER ${e.region.toUpperCase()}`} title="The place. The questions. The evidence." href={`/explore?region=${encodeURIComponent(e.region)}`} link="Browse resources" /><div className="resource-grid">{resources.filter(r => r.region === e.region).map((r, i) => <ResourceCard key={r.slug} resource={r} index={i} />)}</div><p className="collection-note">This is a curated regional collection, not a live expedition feed. Geographic labels describe regions rather than operational locations. <a className="text-link" href={e.source} target="_blank" rel="noreferrer">Visit the official source ↗</a></p></section></main>; }

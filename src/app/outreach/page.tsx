@@ -1,0 +1,5 @@
+import Link from 'next/link';
+import { publicOutreach } from '@/server/outreach';
+export const dynamic='force-dynamic';
+export const metadata={title:'Outreach stories'};
+export default async function Page(){const rows=await publicOutreach();return <main id="main" className="container outreach-shell"><header className="outreach-hero"><div><span className="eyebrow">SCIENCE, SHARED THOUGHTFULLY</span><h1>Ideas that travel<br/><em>beyond the ice.</em></h1><p>Reviewed stories with the evidence close at hand.</p></div></header><div className="studio-draft-grid">{rows.length?rows.map(r=><Link key={r.id} className="studio-draft-card" href={`/outreach/${r.id}`}><span className="eyebrow">{r.payload.format} · {r.payload.language}</span><strong>{r.payload.title}</strong><span>Read with evidence →</span></Link>):<section className="workspace-panel"><h2>Good stories take care.</h2><p>Our first outreach stories will appear here after independent review and publication.</p><Link className="text-link" href="/explore">Explore the source collection →</Link></section>}</div></main>;}

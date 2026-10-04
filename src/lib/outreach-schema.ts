@@ -1,0 +1,13 @@
+import { z } from 'zod';
+export const formats = ['Student explainer','Website news','Social caption'] as const;
+export const languages = ['English','Hindi'] as const;
+export const passage = z.object({ text:z.string().trim().min(10).max(2500), citations:z.array(z.string().max(90)).min(1).max(6) }).strict();
+export const draftContent = z.object({ title:z.string().trim().min(5).max(180), paragraphs:z.array(passage).min(1).max(12) }).strict();
+export const sourceIds = z.array(z.string().uuid()).min(1).max(3).refine(x=>new Set(x).size===x.length,'Select distinct sources.');
+export const draftInput = draftContent.extend({ sourceIds, format:z.enum(formats),language:z.enum(languages),previousId:z.string().uuid().nullable(),generationId:z.string().uuid().nullable() }).strict();
+export const generateInput = z.object({sourceIds,format:z.enum(formats),language:z.enum(languages)}).strict();
+export const outreachAction = z.object({action:z.enum(['submit','approve','request_changes','publish','withdraw']),comment:z.string().trim().max(2000).default(''),evidenceChecked:z.boolean().default(false),languageChecked:z.boolean().default(false)}).strict();
+export type Source = {id:string;revision_id:string;revision_no:number;slug:string;title:string;source:string;cleared:boolean;chunks:{id:string;text:string;label:string}[]};
+export type Content = z.infer<typeof draftContent>;
+export type OutreachPayload = Content & {format:typeof formats[number];language:typeof languages[number];sources:Source[];generationId:string|null};
+export type OutreachRow = {id:string;family_id:string;version:number;owner_id:string;status:string;payload:OutreachPayload;created_at:string;eligible:boolean};
