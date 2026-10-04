@@ -1,0 +1,50 @@
+{
+  "name": "polarbridge",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build --webpack",
+    "start": "next start --hostname 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "db:setup": "node scripts/setup-local.mjs",
+    "db:local": "node scripts/local-db.mjs",
+    "db:migrate": "node --env-file=.env.local --import ./scripts/register.mjs scripts/migrate.ts",
+    "db:seed": "node --env-file=.env.local --import ./scripts/register.mjs scripts/seed-local.ts",
+    "staff:create": "node --env-file=.env.local --import ./scripts/register.mjs scripts/provision-staff.ts",
+    "test:backend": "node --import ./scripts/register.mjs tests/backend.ts",
+    "files:process": "node --env-file=.env.local --import ./scripts/register.mjs scripts/ingest.ts",
+    "scanner:defender": "powershell -NoProfile -File scripts/defender-worker.ps1",
+    "scanner:setup": "powershell -NoProfile -File scripts/setup-scanner.ps1",
+    "scanner:update": "powershell -NoProfile -File scripts/run-scanner.ps1 -Action update",
+    "scanner:start": "powershell -NoProfile -File scripts/run-scanner.ps1 -Action start",
+    "scanner:health": "node --env-file=.env.local --import ./scripts/register.mjs scripts/scanner-health.ts",
+    "files:watch": "node --env-file=.env.local --import ./scripts/register.mjs scripts/ingest.ts --watch",
+    "test:scanner": "node --env-file=.env.local --import ./scripts/register.mjs tests/real-scanner.ts"
+  },
+  "engines": {
+    "node": ">=22.15.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "3.1142.0",
+    "@aws-sdk/s3-presigned-post": "3.1142.0",
+    "@aws-sdk/s3-request-presigner": "3.1142.0",
+    "better-auth": "1.7.6",
+    "lucide-react": "1.48.0",
+    "next": "16.3.6",
+    "pg": "8.23.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "sharp": "0.35.5",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.8",
+    "@electric-sql/pglite-socket": "0.2.11",
+    "@types/node": "26.6.3",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "5.9.3"
+  }
+}
